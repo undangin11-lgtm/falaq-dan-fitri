@@ -1,0 +1,240 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Wedding Invitation</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Great+Vibes&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+overflow:hidden;
+background:#000;
+}
+
+.cover{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:url("cover.jpg") center center/cover no-repeat;
+display:flex;
+justify-content:center;
+align-items:center;
+flex-direction:column;
+text-align:center;
+color:white;
+padding:30px;
+z-index:999;
+}
+
+.cover::before{
+content:"";
+position:absolute;
+inset:0;
+background:rgba(0,0,0,.28);
+backdrop-filter:blur(1px);
+}
+
+.content{
+position:relative;
+z-index:2;
+max-width:350px;
+}
+
+/* Judul */
+
+.title{
+font-family:'Cormorant Garamond', serif;
+font-size:18px;
+letter-spacing:5px;
+text-transform:uppercase;
+margin-bottom:18px;
+}
+
+/* Nama */
+
+.name{
+font-family:'Great Vibes', cursive;
+font-size:50px;
+line-height:1.25;
+margin-bottom:25px;
+text-shadow:0 3px 12px rgba(0,0,0,.4);
+}
+
+/* Kepada */
+
+.to{
+font-family:'Montserrat', sans-serif;
+font-size:13px;
+letter-spacing:2px;
+margin-bottom:10px;
+}
+
+/* Nama tamu */
+
+.guest{
+font-family:'Montserrat', sans-serif;
+font-size:19px;
+font-weight:500;
+margin-bottom:35px;
+}
+
+/* Tombol */
+
+button{
+padding:13px 34px;
+border:none;
+border-radius:40px;
+background:#D4AF37;
+color:#fff;
+font-size:15px;
+font-family:'Montserrat', sans-serif;
+cursor:pointer;
+transition:.3s;
+box-shadow:0 8px 25px rgba(0,0,0,.25);
+}
+
+button:hover{
+transform:translateY(-2px);
+}
+
+#video{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+object-fit:cover;
+background:#000;
+
+opacity:0;
+visibility:hidden;
+
+transition:opacity 1.5s ease;
+
+z-index:1;
+}
+
+#video.show{
+opacity:1;
+visibility:visible;
+}
+```
+
+
+#video.show{
+opacity:1;
+transform:scale(1);
+}
+
+.cover{
+transition:
+opacity 6s ease,
+transform 6s ease,
+filter 6s ease;
+}
+
+.cover.hide{
+opacity:0;
+transform:scale(1.05);
+filter:blur(8px);
+pointer-events:none;
+}
+```
+
+
+</style>
+</head>
+
+<body>
+
+<div class="cover" id="cover">
+
+<div class="content">
+
+<div class="title">
+THE WEDDING OF
+</div>
+
+<div class="name">
+Falaq <br>
+& <br>
+Fitri
+</div>
+
+<div class="to">
+Kepada Yth.
+</div>
+
+<div class="guest" id="guest">
+Bapak / Ibu / Saudara/i
+</div>
+
+<button onclick="openInvitation()">
+💌 Buka Undangan
+</button>
+
+</div>
+
+</div>
+
+<video
+id="video"
+controls
+playsinline
+preload="auto">
+
+<source src="video.mp4" type="video/mp4">
+
+</video>
+
+<script>
+
+const params = new URLSearchParams(window.location.search);
+
+if(params.get("to")){
+document.getElementById("guest").innerHTML=
+decodeURIComponent(params.get("to"));
+}
+
+function openInvitation(){
+
+    const cover = document.getElementById("cover");
+    const video = document.getElementById("video");
+
+    // Tampilkan video
+    video.classList.add("show");
+
+    // Putar video
+    video.play().catch((err)=>{
+        console.error("Video gagal diputar:", err);
+    });
+
+    // Hilangkan cover dengan animasi
+    setTimeout(()=>{
+        cover.classList.add("hide");
+    },200);
+
+    // Hapus cover setelah animasi selesai
+    setTimeout(()=>{
+        cover.remove();
+    },7000);
+
+}
+
+</script>
+
+</body>
+</html>
