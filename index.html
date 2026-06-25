@@ -1,236 +1,138 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Wedding Invitation</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Great+Vibes&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+<title>UNDANG.IN - Generator Tamu</title>
 
 <style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-}
+*{margin:0;padding:0;box-sizing:border-box}
 
 body{
-overflow:hidden;
-background:#000;
-}
-
-.cover{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:url("cover.jpg") center center/cover no-repeat;
+font-family:Arial,sans-serif;
+background:#f4f4f4;
 display:flex;
 justify-content:center;
 align-items:center;
-flex-direction:column;
-text-align:center;
-color:white;
+height:100vh;
+}
+
+.card{
+width:340px;
+background:#fff;
 padding:30px;
-z-index:999;
+border-radius:20px;
+box-shadow:0 15px 35px rgba(0,0,0,.12);
+text-align:center;
 }
 
-.cover::before{
-content:"";
-position:absolute;
-inset:0;
-background:rgba(0,0,0,.28);
-backdrop-filter:blur(1px);
-}
-
-.content{
-position:relative;
-z-index:2;
-max-width:350px;
-}
-
-/* Judul */
-
-.title{
-font-family:'Cormorant Garamond', serif;
-font-size:18px;
-letter-spacing:5px;
-text-transform:uppercase;
-margin-bottom:18px;
-}
-
-/* Nama */
-
-.name{
-font-family:'Great Vibes', cursive;
-font-size:50px;
-line-height:1.25;
-margin-bottom:25px;
-text-shadow:0 3px 12px rgba(0,0,0,.4);
-}
-
-/* Kepada */
-
-.to{
-font-family:'Montserrat', sans-serif;
-font-size:13px;
-letter-spacing:2px;
+.logo{
+width:100px;
 margin-bottom:10px;
 }
 
-/* Nama tamu */
-
-.guest{
-font-family:'Montserrat', sans-serif;
-font-size:19px;
-font-weight:500;
-margin-bottom:35px;
+h2{
+font-size:24px;
+margin-bottom:20px;
 }
 
-/* Tombol */
+input{
+textarea{
+width:100%;
+padding:12px;
+margin:10px 0;
+border:1px solid #ddd;
+border-radius:10px;
+font-size:15px;
+resize:none;
+font-family:Arial,sans-serif;
+}
 
 button{
-padding:13px 34px;
+width:100%;
+padding:12px;
+margin-top:10px;
 border:none;
-border-radius:40px;
-background:#D4AF37;
+border-radius:10px;
+background:#111;
 color:#fff;
 font-size:15px;
-font-family:'Montserrat', sans-serif;
 cursor:pointer;
-transition:.3s;
-box-shadow:0 8px 25px rgba(0,0,0,.25);
 }
 
 button:hover{
-transform:translateY(-2px);
+background:#333;
 }
 
-#video{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-object-fit:cover;
-background:#000;
-
-opacity:0;
-visibility:hidden;
-
-transition:opacity 1.5s ease;
-
-z-index:1;
+#hasil{
+margin-top:15px;
+font-size:13px;
+word-break:break-all;
+color:#555;
 }
 
-#video.show{
-opacity:1;
-visibility:visible;
+small{
+display:block;
+margin-top:20px;
+color:#999;
 }
-```
-
-
-#video.show{
-opacity:1;
-transform:scale(1);
-}
-
-.cover{
-transition:
-opacity 6s ease,
-transform 6s ease,
-filter 6s ease;
-}
-
-.cover.hide{
-opacity:0;
-transform:scale(1.05);
-filter:blur(8px);
-pointer-events:none;
-}
-```
-
-
 </style>
 </head>
 
 <body>
 
-<div class="cover" id="cover">
+<div class="card">
 
-<div class="content">
+<img src="logo.png" class="logo">
 
-<div class="title">
-THE WEDDING OF
-</div>
+<h2>UNDANG.IN</h2>
 
-<div class="name">
-Falaq <br>
-& <br>
-Fitri
-</div>
+<textarea
+id="nama"
+rows="10"
+placeholder="Masukkan 1 nama setiap baris
 
-<div class="to">
-Kepada Yth.
-</div>
+Contoh:
+Bapak Ahmad
+Ibu Siti
+Bapak Budi & Keluarga
+Saudara Andi"></textarea>
 
-<div class="guest" id="guest">
-Bapak / Ibu / Saudara/i
-</div>
-
-<button onclick="openInvitation()">
-💌 Buka Undangan
+<button onclick="generate()">
+Generate Link
 </button>
 
-</div>
+<button onclick="copyLink()">
+Copy Link
+</button>
+
+<div id="hasil"></div>
+
+<small>Premium Digital Invitation</small>
 
 </div>
-
-<video
-id="video"
-controls
-playsinline
-preload="auto">
-
-<source src="video.mp4" type="video/mp4">
-
-</video>
 
 <script>
 
-const params = new URLSearchParams(window.location.search);
+function generate(){
 
-if(params.get("to")){
-document.getElementById("guest").innerHTML=
-decodeURIComponent(params.get("to"));
+let daftar=document.getElementById("nama").value.trim().split("\n");
+
+let hasil="";
+
+daftar.forEach(function(nama){
+
+if(nama.trim()!=""){
+
+hasil += "https://domainanda.vercel.app/?to=" +
+encodeURIComponent(nama.trim()) +
+"<br><br>";
+
 }
 
-function openInvitation(){
+});
 
-    const cover = document.getElementById("cover");
-    const video = document.getElementById("video");
-
-    // Tampilkan video
-    video.classList.add("show");
-
-    // Putar video
-    video.play().catch((err)=>{
-        console.error("Video gagal diputar:", err);
-    });
-
-    // Hilangkan cover dengan animasi
-    setTimeout(()=>{
-        cover.classList.add("hide");
-    },200);
-
-    // Hapus cover setelah animasi selesai
-    setTimeout(()=>{
-        cover.remove();
-    },7000);
+document.getElementById("hasil").innerHTML=hasil;
 
 }
 
