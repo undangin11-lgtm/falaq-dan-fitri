@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generator Link Tamu</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 20px;
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #f8f1e7, #ead8bd);
+      color: #333;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 22px;
+      padding: 30px;
+      box-shadow: 0 15px 40px rgba(0,0,0,.12);
+    }
+
+    h1 {
+      text-align: center;
+      color: #8b6b43;
+      margin: 0 0 8px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #888;
+      margin: 0 0 30px;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 220px;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      resize: vertical;
+      font-size: 15px;
+      font-family: inherit;
+      outline: none;
+    }
+
+    textarea:focus {
+      border-color: #9b794c;
+      box-shadow: 0 0 0 3px rgba(155,121,76,.12);
+    }
+
+    .hint {
+      color: #999;
+      font-size: 13px;
+      margin: 8px 0 20px;
+    }
+
+    .generate {
+      width: 100%;
+      border: 0;
+      padding: 15px;
+      border-radius: 12px;
+      background: #8b6b43;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .generate:hover {
+      background: #735735;
+    }
+
+    .result {
+      margin-top: 30px;
+    }
+
+    .result-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+    }
+
+    .result-header h2 {
+      margin: 0;
+      color: #555;
+      font-size: 20px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    button.action {
+      border: 0;
+      padding: 10px 14px;
+      border-radius: 9px;
+      cursor: pointer;
+      color: white;
+      font-weight: bold;
+    }
+
+    .copy-all {
+      background: #333;
+    }
+
+    .download {
+      background: #287a4b;
+    }
+
+    .guest {
+      background: #fafafa;
+      border: 1px solid #eee;
+      border-radius: 13px;
+      padding: 15px;
+      margin-bottom: 12px;
+    }
+
+    .guest-name {
+      font-weight: bold;
+      color: #8b6b43;
+      margin-bottom: 10px;
+    }
+
+    .link-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .link-row input {
+      flex: 1;
+      min-width: 0;
+      padding: 11px;
+      border: 1px solid #ddd;
+      border-radius: 9px;
+      background: white;
+      font-size: 13px;
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 9px;
+      padding: 10px 14px;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .btn-copy {
+      background: #8b6b43;
+    }
+
+    .btn-wa {
+      background: #25D366;
+    }
+
+    .empty {
+      text-align: center;
+      padding: 30px;
+      border: 1px dashed #ddd;
+      border-radius: 12px;
+      color: #999;
+    }
+
+    .footer {
+      text-align: center;
+      color: #888;
+      font-size: 12px;
+      margin-top: 20px;
+    }
+
+    @media(max-width:600px) {
+      .card {
+        padding: 20px;
+      }
+
+      .link-row {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <div class="card">
+
+    <h1>💌 Generator Tamu Undangan</h1>
+
+    <p class="subtitle">
+      Buat link personal untuk setiap tamu
+    </p>
+
+    <label for="guestNames">
+      Nama Tamu
+    </label>
+
+    <textarea
+      id="guestNames"
+      placeholder="Budi Santoso
+Ibu Siti
+Keluarga Bapak Ahmad
+Andi & Rina
+Bapak Joko"
+    ></textarea>
+
+    <div class="hint">
+      Masukkan satu nama tamu pada setiap baris.
+    </div>
+
+    <button
+      class="generate"
+      onclick="generateLinks()"
+    >
+      ✨ Generate Link Tamu
+    </button>
+
+    <div id="result" class="result"></div>
+
+  </div>
+
+  <div class="footer">
+    Generator Tamu Undangan
+  </div>
+
+</div>
+
+<script>
+
+let guests = [];
+
+/*
+  Generator otomatis menggunakan:
+  domain Vercel saat website online
+  + /undangan.html
+*/
+function getInvitationURL(name) {
+
+  const url = new URL(
+    "undangan.html",
+    window.location.href
+  );
+
+  url.searchParams.set("to", name);
+
+  return url.href;
+}
+
+
+function generateLinks() {
+
+  const text =
+    document.getElementById("guestNames")
+    .value
+    .trim();
+
+  if (!text) {
+    alert("Masukkan nama tamu terlebih dahulu.");
+    return;
+  }
+
+  const names = text
+    .split(/\r?\n/)
+    .map(name => name.trim())
+    .filter(name => name.length > 0);
+
+  guests = names.map(name => ({
+    name: name,
+    link: getInvitationURL(name)
+  }));
+
+  displayResults();
+}
+
+
+function displayResults() {
+
+  const result =
+    document.getElementById("result");
+
+  if (!guests.length) {
+
+    result.innerHTML = `
+      <div class="empty">
+        Belum ada link.
+      </div>
+    `;
+
+    return;
+  }
+
+  let html = `
+
+    <div class="result-header">
+
+      <h2>
+        ${guests.length} Link Tamu
+      </h2>
+
+      <div class="actions">
+
+        <button
+          class="action copy-all"
+          onclick="copyAll()"
+        >
+          📋 Copy Semua
+        </button>
+
+        <button
+          class="action download"
+          onclick="downloadCSV()"
+        >
+          📥 CSV
+        </button>
+
+      </div>
+
+    </div>
+  `;
+
+  guests.forEach((guest, index) => {
+
+    html += `
+
+      <div class="guest">
+
+        <div class="guest-name">
+          ${index + 1}. ${escapeHTML(guest.name)}
+        </div>
+
+        <div class="link-row">
+
+          <input
+            id="link-${index}"
+            value="${escapeAttribute(guest.link)}"
+            readonly
+          >
+
+          <button
+            class="btn btn-copy"
+            onclick="copyOne(${index})"
+          >
+            Copy
+          </button>
+
+          <button
+            class="btn btn-wa"
+            onclick="whatsapp(${index})"
+          >
+            WhatsApp
+          </button>
+
+        </div>
+
+      </div>
+    `;
+  });
+
+  result.innerHTML = html;
+}
+
+
+function copyOne(index) {
+
+  const link = guests[index].link;
+
+  navigator.clipboard
+    .writeText(link)
+    .then(() => {
+      alert(
+        "Link " +
+        guests[index].name +
+        " berhasil disalin."
+      );
+    })
+    .catch(() => fallbackCopy(link));
+}
+
+
+function copyAll() {
+
+  const text = guests
+    .map(g => `${g.name}\t${g.link}`)
+    .join("\n");
+
+  navigator.clipboard
+    .writeText(text)
+    .then(() => {
+      alert("Semua link berhasil disalin.");
+    })
+    .catch(() => fallbackCopy(text));
+}
+
+
+function whatsapp(index) {
+
+  const guest = guests[index];
+
+  const message =
+`Halo ${guest.name},
+
+Kami mengundang Anda untuk hadir di acara kami.
+
+Silakan buka undangan melalui link berikut:
+
+${guest.link}
+
+Terima kasih.`;
+
+  const url =
+    "https://wa.me/?text=" +
+    encodeURIComponent(message);
+
+  window.open(url, "_blank");
+}
+
+
+function downloadCSV() {
+
+  let csv =
+    "Nama Tamu,Link Undangan\n";
+
+  guests.forEach(guest => {
+
+    const name =
+      '"' +
+      guest.name.replace(/"/g, '""') +
+      '"';
+
+    const link =
+      '"' +
+      guest.link +
+      '"';
+
+    csv +=
+      name +
+      "," +
+      link +
+      "\n";
+  });
+
+  const blob = new Blob(
+    [csv],
+    {
+      type: "text/csv;charset=utf-8;"
+    }
+  );
+
+  const url =
+    URL.createObjectURL(blob);
+
+  const a =
+    document.createElement("a");
+
+  a.href = url;
+  a.download =
+    "link-tamu-undangan.csv";
+
+  document.body.appendChild(a);
+
+  a.click();
+
+  document.body.removeChild(a);
+
+  URL.revokeObjectURL(url);
+}
+
+
+function fallbackCopy(text) {
+
+  const textarea =
+    document.createElement("textarea");
+
+  textarea.value = text;
+
+  document.body.appendChild(textarea);
+
+  textarea.select();
+
+  document.execCommand("copy");
+
+  document.body.removeChild(textarea);
+
+  alert("Berhasil disalin.");
+}
+
+
+function escapeHTML(text) {
+
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+
+function escapeAttribute(text) {
+
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+</script>
+
+</body>
+</html>
